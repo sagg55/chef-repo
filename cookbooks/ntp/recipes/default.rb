@@ -10,6 +10,11 @@ package 'ntp' do
   action :install
 end
 
+service "ntpd" do
+  supports :start =>true, :stop => true, :restart => true, status => true
+  action :none
+ end
+ 
 #cookbook_file "/etc/ntp.conf" do
 #  source "lx-ntp.conf"
 #  mode "0644"
@@ -23,9 +28,9 @@ template "/etc/ntp.conf" do
   variables({
      :server_list => node[:authorization][:sudo][:servers],
   })
+  notifies :restart, resources(:service => ntpd)
 end
 
- 
  
 service 'ntpd' do
   action [ :enable, :start ]
